@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/thinkube/thinkube-fixes/schema/feed.schema.json",
+  "title": "Thinkube news and fixes feed for one platform release",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["news", "fixes"],
+  "properties": {
+    "news": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/news" }
+    },
+    "fixes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fix" }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,199}$" },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "news": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "title", "body"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "title": { "$ref": "#/$defs/text" },
+        "body": { "$ref": "#/$defs/text" }
+      }
+    },
+    "fix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "title", "body", "severity", "component", "kind", "fixed_in", "commit", "playbook"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "title": { "$ref": "#/$defs/text" },
+        "body": { "$ref": "#/$defs/text" },
+        "severity": { "enum": ["security", "bug"] },
+        "component": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "kind": { "enum": ["core", "optional"] },
+        "fixed_in": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "playbook": { "type": "string", "pattern": "^ansible/40_thinkube/(core|optional)/[A-Za-z0-9_./-]+\\.ya?ml$" }
+      }
+    }
+  }
+}

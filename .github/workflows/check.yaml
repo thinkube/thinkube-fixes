@@ -1,0 +1,32 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Check feeds
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone thinkube with its release branches
+        run: |
+          git clone --quiet --no-checkout --filter=blob:none https://github.com/thinkube/thinkube.git thinkube
+          git -C thinkube fetch --quiet origin '+refs/heads/release-*:refs/remotes/origin/release-*'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install jsonschema
+        run: pip install jsonschema==4.26.0
+
+      - name: Check every feed
+        run: python scripts/check_feed.py thinkube

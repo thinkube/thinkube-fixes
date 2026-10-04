@@ -1,0 +1,11 @@
+{
+  "news": [
+    {
+      "id": "thinkube-0-1",
+      "date": "2026-10-04",
+      "title": "Thinkube 0.1, an alpha",
+      "body": "This is the first release of Thinkube. It is an alpha. Two hardware configurations have run it so far; yours may be the first of its kind.\n\nAn alpha means that things will break, and that there is no promised way to move a 0.1 cluster to a later release.\n\nThis page is how your cluster hears about fixes and news. Thinkube Control checks for them when it starts and every six hours. A fix is applied only when you click Apply.\n\nTo ask a question, use the Thinkube Zulip chat: https://thinkube.zulipchat.com/\n\nTo report a bug, open an issue at https://github.com/thinkube/thinkube/issues. Say what you ran, what you expected, and what happened, in the tool's own words."
+    }
+  ],
+  "fixes": []
+}
