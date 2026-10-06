@@ -7,5 +7,30 @@
       "body": "This is the first release of Thinkube. It is an alpha. Two hardware configurations have run it so far; yours may be the first of its kind.\n\nAn alpha means that things will break, and that there is no promised way to move a 0.1 cluster to a later release.\n\nThis page is how your cluster hears about fixes and news. Thinkube Control checks for them when it starts and every six hours. A fix is applied only when you click Apply.\n\nTo ask a question, use the Thinkube Zulip chat: https://thinkube.zulipchat.com/\n\nTo report a bug, open an issue at https://github.com/thinkube/thinkube/issues. Say what you ran, what you expected, and what happened, in the tool's own words."
     }
   ],
-  "fixes": []
+  "fixes": [
+    {
+      "id": "thinkube-control-build-size",
+      "date": "2026-10-06",
+      "title": "A container can ask for more memory to build",
+      "body": "Every image build ran in a pod with a 4Gi memory limit, whatever the container. A large frontend build, such as a Nuxt application with many layers, was killed before it finished.\n\nA container in thinkube.yaml may now declare buildSize: small (4Gi, the default), medium (8Gi), large (16Gi) or xlarge (32Gi). It is separate from size, which is what the container gets at run time. A build setting changed in thinkube.yaml reaches an app's pipeline at its next redeploy.",
+      "severity": "bug",
+      "component": "thinkube-control",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "3ca53de6bc3a517f63f9117dba5c7a13b4ccdad3",
+      "playbook": "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
+    },
+    {
+      "id": "thinkube-control-commit-rollout-first-push",
+      "date": "2026-10-06",
+      "title": "get_commit_rollout answers for an app's early commits",
+      "body": "Asking whether a commit of an app was rolled out failed with \"Expecting value: line 1 column 1 (char 0)\" while the app's first push was still among the recent entries of its activity feed. Gitea records that first push twice, once for the creation of main with an empty content, and Thinkube Control tried to read that entry as a push.\n\nThe creation entry is now skipped.",
+      "severity": "bug",
+      "component": "thinkube-control",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "3ca53de6bc3a517f63f9117dba5c7a13b4ccdad3",
+      "playbook": "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
+    }
+  ]
 }

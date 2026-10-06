@@ -28,6 +28,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
+CONTROL_UPDATE_PLAYBOOK = "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
 
 
 def git(checkout: Path, *args: str) -> subprocess.CompletedProcess:
@@ -66,6 +67,10 @@ def check(feed_path: Path, validator: Draft202012Validator, checkout: Path | Non
             errors.append(f"{where}: playbook is not under ansible/40_thinkube/{fix['kind']}/")
         if ".." in fix["playbook"]:
             errors.append(f"{where}: playbook path contains '..'")
+        # thinkube-control's install playbook, 12_deploy.yaml, drops the
+        # component's databases; a cluster updates it with 12_deploy_dev.yaml.
+        if fix["component"] == "thinkube-control" and fix["playbook"] != CONTROL_UPDATE_PLAYBOOK:
+            errors.append(f"{where}: a thinkube-control fix names {CONTROL_UPDATE_PLAYBOOK}")
         on_branch = git(checkout, "merge-base", "--is-ancestor", fix["commit"], branch)
         if on_branch.returncode != 0:
             errors.append(f"{where}: commit {fix['commit']} is not on {branch}: {on_branch.stderr.strip()}")

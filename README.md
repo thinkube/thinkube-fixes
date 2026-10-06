@@ -52,6 +52,12 @@ A **fix** entry:
 - `commit` is a commit on the release branch of
   [thinkube/thinkube](https://github.com/thinkube/thinkube).
 - `playbook` is the playbook that installs the component, in that repository.
+  The one exception is `thinkube-control`: its install playbook,
+  `12_deploy.yaml`, drops the component's databases, so a fix of
+  thinkube-control names
+  `ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml`, which
+  updates an installed Thinkube Control. The check refuses any other
+  playbook for it.
 
 ## A fix is a pointer, not code
 
