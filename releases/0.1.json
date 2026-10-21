@@ -7,5 +7,78 @@
       "body": "This is the first release of Thinkube. It is an alpha. Two hardware configurations have run it so far; yours may be the first of its kind.\n\nAn alpha means that things will break, and that there is no promised way to move a 0.1 cluster to a later release.\n\nThis page is how your cluster hears about fixes and news. Thinkube Control checks for them when it starts and every six hours. A fix is applied only when you click Apply.\n\nTo ask a question, use the Thinkube Zulip chat: https://thinkube.zulipchat.com/\n\nTo report a bug, open an issue at https://github.com/thinkube/thinkube/issues. Say what you ran, what you expected, and what happened, in the tool's own words."
     }
   ],
-  "fixes": []
+  "fixes": [
+    {
+      "id": "thinkube-control-0-1-2",
+      "date": "2026-10-21",
+      "title": "Thinkube Control 0.1.2: LLM gateway, deploys, builds and training mode",
+      "body": "Fixes:\n- The LLM gateway runs several one-model engines on a node, starts them one at a time, keeps load deadlines across restarts, and a Thinkube Control restart no longer restarts the models. Calibrated models are sized from their measured memory.\n- spec.env values given at deploy reach the containers, and a redeploy keeps them.\n- thinkube.yaml placeholders are resolved. App and Knative routes allow long requests (600 seconds, or the service's timeoutSeconds).\n- A container may ask for more build memory with buildSize, and a test pod's memory with test.size.\n- The LLM proxy answers 503, not 401, when a token cannot be checked. The CI/CD pages and API token checks no longer block other requests.\n\nNew: training mode reserves one node for a training; notebook jobs survive slow status calls and restarts; the Storage page shows the shared folders, their quotas and the disk under them.\n\nThinkube Control restarts during the update.",
+      "severity": "bug",
+      "component": "thinkube-control",
+      "kind": "core",
+      "fixed_in": "0.1.2",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
+    },
+    {
+      "id": "knative-local-gateway-port",
+      "date": "2026-10-21",
+      "title": "Knative services answer at their cluster address",
+      "body": "Every cluster address of a Knative service (http://<service>.<namespace>.svc.cluster.local) timed out, including the addresses that dependencies in thinkube.yaml give to an app. The local gateway listened on port 8081; it now listens on port 80.\n\nKnative Serving also stays on the control plane, so training mode does not stop app revisions.",
+      "severity": "bug",
+      "component": "knative",
+      "kind": "optional",
+      "fixed_in": "0.1.1",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/optional/knative/00_install.yaml"
+    },
+    {
+      "id": "argo-workflows-control-plane",
+      "date": "2026-10-21",
+      "title": "Builds keep running while a training reserves a node",
+      "body": "Training mode stops every workload on the node it reserves. When the Argo Workflows controller, its server, Argo Events or the Gitea webhook ran on that node, a training stopped every build. They now stay on the control plane. The build pods themselves still run on both architectures.",
+      "severity": "bug",
+      "component": "argo-workflows",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/core/argo-workflows/00_install.yaml"
+    },
+    {
+      "id": "argocd-control-plane",
+      "date": "2026-10-21",
+      "title": "ArgoCD keeps syncing while a training reserves a node",
+      "body": "Training mode stops every workload on the node it reserves. When an ArgoCD component ran on that node, a training stopped every sync. ArgoCD now stays on the control plane.",
+      "severity": "bug",
+      "component": "argocd",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/core/argocd/00_install.yaml"
+    },
+    {
+      "id": "jupyterhub-training",
+      "date": "2026-10-21",
+      "title": "JupyterHub: reserved memory, model cache and training jobs",
+      "body": "- A server that asks to reserve its memory gets all of it guaranteed.\n- The MLflow volume caches a whole model on the node.\n- A training's notebook job may run on the node training mode keeps free, and gets that node's training folder, kept across pods.\n\nNotebook servers restart during the update.",
+      "severity": "bug",
+      "component": "jupyterhub",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/core/jupyterhub/00_install.yaml"
+    },
+    {
+      "id": "code-server-claude-code-tandem",
+      "date": "2026-10-21",
+      "title": "Thinkube IDE: Claude Code 2.1.301 and the Tandem plugin",
+      "body": "Thinkube IDE gets Claude Code 2.1.301, the version the Tandem extension expects, and the Tandem plugin for Claude Code, which registers the Tandem tools. The Tandem tools are pre-approved. The agent instructions are updated.\n\nThinkube IDE restarts during the update. Save your work first.",
+      "severity": "bug",
+      "component": "code-server",
+      "kind": "core",
+      "fixed_in": "0.1.1",
+      "commit": "546bb0335ee4f90b3987a3c0bf35d76ee1dd9c43",
+      "playbook": "ansible/40_thinkube/core/code-server/00_install.yaml"
+    }
+  ]
 }
