@@ -9,6 +9,42 @@
   ],
   "fixes": [
     {
+      "id": "thinkube-control-0-1-3",
+      "date": "2026-10-21",
+      "title": "Thinkube Control 0.1.3: Flare, and LLM engines declared by their components",
+      "body": "New: Flare, NVIDIA's inference server for Blackwell GPUs, as an optional component, with Qwen3.8 Flash Next for DGX Spark in the model catalog. It answers OpenAI and Anthropic requests through the LLM gateway.\n\nEach inference engine now declares itself to the LLM gateway in its own thinkube.yaml, so a new engine is added as a template, with no change to Thinkube Control. After this update, the gateway offers an installed engine only once it declares itself: apply the Ollama 0.1.1 fix, and redeploy each installed vLLM, TensorRT-LLM and text-embeddings component. In Thinkube IDE, ask your agent: \"redeploy the vllm component\" (the redeploy_template tool).\n\nFixes:\n- A model load stays within the namespace quota, and a pod that is refused or crashes fails the load with its reason.\n- The model catalog is read again on demand, and each model can carry its own server arguments.\n- Model mirrors download files over 50 GB through Xet.\n- Model aliases, the agent mark and the agent default come from the model catalog. GET /v1/models describes each model for agent clients.\n\nFlare locks memory. On a node installed before this release, containerd allows only 8 MiB of locked memory and Flare stops with ENOMEM. To allow it, write /etc/systemd/system/containerd.service.d/thinkube-limits.conf on the GPU node with the two lines [Service] and LimitMEMLOCK=infinity, then run sudo systemctl daemon-reload and sudo systemctl restart containerd. New installs have it.\n\nThinkube Control restarts during the update.",
+      "severity": "bug",
+      "component": "thinkube-control",
+      "kind": "core",
+      "fixed_in": "0.1.3",
+      "commit": "a9ba5bd5a357f2cce48071cdbb2f715676fd6f8c",
+      "playbook": "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
+    },
+    {
+      "id": "ollama-llm-backend",
+      "date": "2026-10-21",
+      "title": "Ollama declares itself to the LLM gateway",
+      "body": "Thinkube Control 0.1.3 reads the inference engines from their components. This fix writes Ollama's declaration into its service configuration, so the gateway offers Ollama again. The Ollama pod and its models are not changed.",
+      "severity": "bug",
+      "component": "ollama",
+      "kind": "optional",
+      "fixed_in": "0.1.1",
+      "commit": "a9ba5bd5a357f2cce48071cdbb2f715676fd6f8c",
+      "playbook": "ansible/40_thinkube/optional/ollama/17_configure_discovery.yaml"
+    },
+    {
+      "id": "code-server-pi-gateway-models",
+      "date": "2026-10-21",
+      "title": "Thinkube IDE: Pi uses the models the LLM gateway serves",
+      "body": "Pi reads its models from the LLM gateway when it starts: the models of the catalog marked agent that are loaded, and the agent default. A model loaded later appears in a new chat. In Tandem Chat, the model picker of the chat panel lists these models, and a picked model stays with its chat.\n\nThe opencode client is removed from the configuration; Tandem Chat is built on Pi.\n\nThinkube IDE restarts during the update. Save your work first.",
+      "severity": "bug",
+      "component": "code-server",
+      "kind": "core",
+      "fixed_in": "0.1.2",
+      "commit": "a9ba5bd5a357f2cce48071cdbb2f715676fd6f8c",
+      "playbook": "ansible/40_thinkube/core/code-server/00_install.yaml"
+    },
+    {
       "id": "thinkube-control-0-1-2",
       "date": "2026-10-21",
       "title": "Thinkube Control 0.1.2: LLM gateway, deploys, builds and training mode",
