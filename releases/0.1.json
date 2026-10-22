@@ -9,6 +9,30 @@
   ],
   "fixes": [
     {
+      "id": "thinkube-control-0-1-4",
+      "date": "2026-10-22",
+      "title": "Thinkube Control 0.1.4: venv templates",
+      "body": "Fixes:\n- A venv created from a template gets the template's own installs as well as its packages.\n- A built venv reaches the other GPU nodes; the copy no longer stops at a password prompt.\n- A template that is no longer defined is removed from the list.\n\nNew: the fine-tuning-unsloth template.\n\nThinkube Control restarts during the update.",
+      "severity": "bug",
+      "component": "thinkube-control",
+      "kind": "core",
+      "fixed_in": "0.1.4",
+      "commit": "d9819c72727a0db046b44d124dd1fdead24b1e1c",
+      "playbook": "ansible/40_thinkube/core/thinkube-control/12_deploy_dev.yaml"
+    },
+    {
+      "id": "jupyterhub-unsloth-notebooks",
+      "date": "2026-10-22",
+      "title": "JupyterHub: the thinkube-unsloth notebooks",
+      "body": "Notebook servers get the notebooks of thinkube-unsloth in templates/unsloth/, and a copy in notebooks/unsloth/ the first time.\n\nNotebook servers restart during the update.",
+      "severity": "bug",
+      "component": "jupyterhub",
+      "kind": "core",
+      "fixed_in": "0.1.2",
+      "commit": "d9819c72727a0db046b44d124dd1fdead24b1e1c",
+      "playbook": "ansible/40_thinkube/core/jupyterhub/00_install.yaml"
+    },
+    {
       "id": "thinkube-control-0-1-3",
       "date": "2026-10-21",
       "title": "Thinkube Control 0.1.3: Flare, and LLM engines declared by their components",
